@@ -1,0 +1,29 @@
+wps:
+  wxWork_appid: SX20200920ASZYIR
+  wxWork_appKey: b73fd007de3890ff2b42c4e2c012c3e8
+#  wxWork_appid: AK20200911JDXJXX
+#  wxWork_appKey: 6f8b934b55ba421127a7ee50481d8adb
+  code: d13ce7c9d00d2f78ebb08883c2cd5524
+  tempFileFolder: wpsFiles/
+feishu:
+  apiClientId: cli_9fe1e4470720900e
+  apiSecret: jqeg7q3V8KDlfRWz3S1OHdgHJja5LMzo
+
+
+#
+#  空心平台
+#  APPID AK20200911JDXJXX
+#  APPKEY 6f8b934b55ba421127a7ee50481d8adb
+
+
+#  空心工作
+#  ID:AK20200911SFRENY
+#  KEY:9c73cce79f33ec9f7dff5636c0e70be4
+#  空心平台
+#  APPID AK20200911JDXJXX
+#  APPKEY 6f8b934b55ba421127a7ee50481d8adb
+
+# SX20200920ASZYIR
+# b73fd007de3890ff2b42c4e2c012c3e8
+
+#  Request{method=GET, url=https://openapi.wps.cn/oauthapi/v2/authorize?response_type=code&appid=%20defaultValue&autologin=true&redirect_uri=REDIRECTURI&scope=scope,user_info,cloud_file,file_selector&state=STATE}

@@ -1,0 +1,439 @@
+package org.json;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+
+public class JSONArray {
+    private ArrayList myArrayList;
+
+    public JSONArray() {
+        this.myArrayList = new ArrayList();
+    }
+
+    public JSONArray(JSONTokener var1) throws JSONException {
+        this();
+        if(var1.nextClean() != 91) {
+            throw var1.syntaxError("A JSONArray text must start with \'[\'");
+        } else if(var1.nextClean() != 93) {
+            var1.back();
+
+            while(true) {
+                if(var1.nextClean() == 44) {
+                    var1.back();
+                    this.myArrayList.add(JSONObject.NULL);
+                } else {
+                    var1.back();
+                    this.myArrayList.add(var1.nextValue());
+                }
+
+                switch(var1.nextClean()) {
+                    case ',':
+                    case ';':
+                        if(var1.nextClean() == 93) {
+                            return;
+                        }
+
+                        var1.back();
+                        break;
+                    case ']':
+                        return;
+                    default:
+                        throw var1.syntaxError("Expected a \',\' or \']\'");
+                }
+            }
+        }
+    }
+
+    public JSONArray(String var1) throws JSONException {
+        this(new JSONTokener(var1));
+    }
+
+    public JSONArray(Collection var1) {
+        this.myArrayList = new ArrayList();
+        if(var1 != null) {
+            Iterator var2 = var1.iterator();
+
+            while(var2.hasNext()) {
+                this.myArrayList.add(JSONObject.wrap(var2.next()));
+            }
+        }
+
+    }
+
+    public JSONArray(Object var1) throws JSONException {
+        this();
+        if(!var1.getClass().isArray()) {
+            throw new JSONException("JSONArray initial value should be a string or collection or array.");
+        } else {
+            int var2 = Array.getLength(var1);
+
+            for(int var3 = 0; var3 < var2; ++var3) {
+                this.put(JSONObject.wrap(Array.get(var1, var3)));
+            }
+
+        }
+    }
+
+    public Object get(int var1) throws JSONException {
+        Object var2 = this.opt(var1);
+        if(var2 == null) {
+            throw new JSONException("JSONArray[" + var1 + "] not found.");
+        } else {
+            return var2;
+        }
+    }
+
+    public boolean getBoolean(int var1) throws JSONException {
+        Object var2 = this.get(var1);
+        if(!var2.equals(Boolean.FALSE) && (!(var2 instanceof String) || !((String)var2).equalsIgnoreCase("false"))) {
+            if(!var2.equals(Boolean.TRUE) && (!(var2 instanceof String) || !((String)var2).equalsIgnoreCase("true"))) {
+                throw new JSONException("JSONArray[" + var1 + "] is not a boolean.");
+            } else {
+                return true;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public double getDouble(int var1) throws JSONException {
+        Object var2 = this.get(var1);
+
+        try {
+            return var2 instanceof Number?((Number)var2).doubleValue():Double.parseDouble((String)var2);
+        } catch (Exception var4) {
+            throw new JSONException("JSONArray[" + var1 + "] is not a number.");
+        }
+    }
+
+    public int getInt(int var1) throws JSONException {
+        Object var2 = this.get(var1);
+
+        try {
+            return var2 instanceof Number?((Number)var2).intValue():Integer.parseInt((String)var2);
+        } catch (Exception var4) {
+            throw new JSONException("JSONArray[" + var1 + "] is not a number.");
+        }
+    }
+
+    public JSONArray getJSONArray(int var1) throws JSONException {
+        Object var2 = this.get(var1);
+        if(var2 instanceof JSONArray) {
+            return (JSONArray)var2;
+        } else {
+            throw new JSONException("JSONArray[" + var1 + "] is not a JSONArray.");
+        }
+    }
+
+    public JSONObject getJSONObject(int var1) throws JSONException {
+        Object var2 = this.get(var1);
+        if(var2 instanceof JSONObject) {
+            return (JSONObject)var2;
+        } else {
+            throw new JSONException("JSONArray[" + var1 + "] is not a JSONObject.");
+        }
+    }
+
+    public long getLong(int var1) throws JSONException {
+        Object var2 = this.get(var1);
+
+        try {
+            return var2 instanceof Number?((Number)var2).longValue():Long.parseLong((String)var2);
+        } catch (Exception var4) {
+            throw new JSONException("JSONArray[" + var1 + "] is not a number.");
+        }
+    }
+
+    public String getString(int var1) throws JSONException {
+        Object var2 = this.get(var1);
+        if(var2 instanceof String) {
+            return (String)var2;
+        } else {
+            throw new JSONException("JSONArray[" + var1 + "] not a string.");
+        }
+    }
+
+    public boolean isNull(int var1) {
+        return JSONObject.NULL.equals(this.opt(var1));
+    }
+
+    public String join(String var1) throws JSONException {
+        int var2 = this.length();
+        StringBuffer var3 = new StringBuffer();
+
+        for(int var4 = 0; var4 < var2; ++var4) {
+            if(var4 > 0) {
+                var3.append(var1);
+            }
+
+            var3.append(JSONObject.valueToString(this.myArrayList.get(var4)));
+        }
+
+        return var3.toString();
+    }
+
+    public int length() {
+        return this.myArrayList.size();
+    }
+
+    public Object opt(int var1) {
+        return var1 >= 0 && var1 < this.length()?this.myArrayList.get(var1):null;
+    }
+
+    public boolean optBoolean(int var1) {
+        return this.optBoolean(var1, false);
+    }
+
+    public boolean optBoolean(int var1, boolean var2) {
+        try {
+            return this.getBoolean(var1);
+        } catch (Exception var4) {
+            return var2;
+        }
+    }
+
+    public double optDouble(int var1) {
+        return this.optDouble(var1, 0.0D / 0.0);
+    }
+
+    public double optDouble(int var1, double var2) {
+        try {
+            return this.getDouble(var1);
+        } catch (Exception var5) {
+            return var2;
+        }
+    }
+
+    public int optInt(int var1) {
+        return this.optInt(var1, 0);
+    }
+
+    public int optInt(int var1, int var2) {
+        try {
+            return this.getInt(var1);
+        } catch (Exception var4) {
+            return var2;
+        }
+    }
+
+    public JSONArray optJSONArray(int var1) {
+        Object var2 = this.opt(var1);
+        return var2 instanceof JSONArray?(JSONArray)var2:null;
+    }
+
+    public JSONObject optJSONObject(int var1) {
+        Object var2 = this.opt(var1);
+        return var2 instanceof JSONObject ?(JSONObject)var2:null;
+    }
+
+    public long optLong(int var1) {
+        return this.optLong(var1, 0L);
+    }
+
+    public long optLong(int var1, long var2) {
+        try {
+            return this.getLong(var1);
+        } catch (Exception var5) {
+            return var2;
+        }
+    }
+
+    public String optString(int var1) {
+        return this.optString(var1, "");
+    }
+
+    public String optString(int var1, String var2) {
+        Object var3 = this.opt(var1);
+        return var3 != null?var3.toString():var2;
+    }
+
+    public JSONArray put(boolean var1) {
+        this.put((Object)(var1?Boolean.TRUE:Boolean.FALSE));
+        return this;
+    }
+
+    public JSONArray put(Collection var1) {
+        this.put((Object)(new JSONArray(var1)));
+        return this;
+    }
+
+    public JSONArray put(double var1) throws JSONException {
+        Double var3 = new Double(var1);
+        JSONObject.testValidity(var3);
+        this.put((Object)var3);
+        return this;
+    }
+
+    public JSONArray put(int var1) {
+        this.put((Object)(new Integer(var1)));
+        return this;
+    }
+
+    public JSONArray put(long var1) {
+        this.put((Object)(new Long(var1)));
+        return this;
+    }
+
+    public JSONArray put(Map var1) {
+        this.put((Object)(new JSONObject(var1)));
+        return this;
+    }
+
+    public JSONArray put(Object var1) {
+        this.myArrayList.add(var1);
+        return this;
+    }
+
+    public JSONArray put(int var1, boolean var2) throws JSONException {
+        this.put(var1, (Object)(var2?Boolean.TRUE:Boolean.FALSE));
+        return this;
+    }
+
+    public JSONArray put(int var1, Collection var2) throws JSONException {
+        this.put(var1, (Object)(new JSONArray(var2)));
+        return this;
+    }
+
+    public JSONArray put(int var1, double var2) throws JSONException {
+        this.put(var1, (Object)(new Double(var2)));
+        return this;
+    }
+
+    public JSONArray put(int var1, int var2) throws JSONException {
+        this.put(var1, (Object)(new Integer(var2)));
+        return this;
+    }
+
+    public JSONArray put(int var1, long var2) throws JSONException {
+        this.put(var1, (Object)(new Long(var2)));
+        return this;
+    }
+
+    public JSONArray put(int var1, Map var2) throws JSONException {
+        this.put(var1, (Object)(new JSONObject(var2)));
+        return this;
+    }
+
+    public JSONArray put(int var1, Object var2) throws JSONException {
+        JSONObject.testValidity(var2);
+        if(var1 < 0) {
+            throw new JSONException("JSONArray[" + var1 + "] not found.");
+        } else {
+            if(var1 < this.length()) {
+                this.myArrayList.set(var1, var2);
+            } else {
+                while(var1 != this.length()) {
+                    this.put(JSONObject.NULL);
+                }
+
+                this.put(var2);
+            }
+
+            return this;
+        }
+    }
+
+    public Object remove(int var1) {
+        Object var2 = this.opt(var1);
+        this.myArrayList.remove(var1);
+        return var2;
+    }
+
+    public JSONObject toJSONObject(JSONArray var1) throws JSONException {
+        if(var1 != null && var1.length() != 0 && this.length() != 0) {
+            JSONObject var2 = new JSONObject();
+
+            for(int var3 = 0; var3 < var1.length(); ++var3) {
+                var2.put(var1.getString(var3), this.opt(var3));
+            }
+
+            return var2;
+        } else {
+            return null;
+        }
+    }
+
+    public String toString() {
+        try {
+            return '[' + this.join(",") + ']';
+        } catch (Exception var2) {
+            return null;
+        }
+    }
+
+    public String toString(int var1) throws JSONException {
+        return this.toString(var1, 0);
+    }
+
+    String toString(int var1, int var2) throws JSONException {
+        int var3 = this.length();
+        if(var3 == 0) {
+            return "[]";
+        } else {
+            StringBuffer var5 = new StringBuffer("[");
+            if(var3 == 1) {
+                var5.append(JSONObject.valueToString(this.myArrayList.get(0), var1, var2));
+            } else {
+                int var6 = var2 + var1;
+                var5.append('\n');
+
+                int var4;
+                for(var4 = 0; var4 < var3; ++var4) {
+                    if(var4 > 0) {
+                        var5.append(",\n");
+                    }
+
+                    for(int var7 = 0; var7 < var6; ++var7) {
+                        var5.append(' ');
+                    }
+
+                    var5.append(JSONObject.valueToString(this.myArrayList.get(var4), var1, var6));
+                }
+
+                var5.append('\n');
+
+                for(var4 = 0; var4 < var2; ++var4) {
+                    var5.append(' ');
+                }
+            }
+
+            var5.append(']');
+            return var5.toString();
+        }
+    }
+
+    public Writer write(Writer var1) throws JSONException {
+        try {
+            boolean var2 = false;
+            int var3 = this.length();
+            var1.write(91);
+
+            for(int var4 = 0; var4 < var3; ++var4) {
+                if(var2) {
+                    var1.write(44);
+                }
+
+                Object var5 = this.myArrayList.get(var4);
+                if(var5 instanceof JSONObject) {
+                    ((JSONObject)var5).write(var1);
+                } else if(var5 instanceof JSONArray) {
+                    ((JSONArray)var5).write(var1);
+                } else {
+                    var1.write(JSONObject.valueToString(var5));
+                }
+
+                var2 = true;
+            }
+
+            var1.write(93);
+            return var1;
+        } catch (IOException var6) {
+            throw new JSONException(var6);
+        }
+    }
+}
