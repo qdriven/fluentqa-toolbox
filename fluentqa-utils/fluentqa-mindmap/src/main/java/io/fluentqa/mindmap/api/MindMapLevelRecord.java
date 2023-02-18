@@ -1,8 +1,10 @@
 package io.fluentqa.mindmap.api;
 
-import lombok.Builder;
+import cn.hutool.core.bean.BeanUtil;
+import io.fluentqa.qabox.ReflectionUtils;
 import lombok.Data;
 
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.function.Function;
 
@@ -35,9 +37,30 @@ public class MindMapLevelRecord {
     }
 
     public static <T> List<MindMapLevelRecord> fromMindMapPaths(List<MindMapPath<T>> paths,
-                                                         Function<T, String> extractValueFunc) {
+                                                                Function<T, String> extractValueFunc) {
         List<MindMapLevelRecord> records = new ArrayList<>();
-        paths.forEach((t)->records.add(fromMindMapPath(t,extractValueFunc)));
+        paths.forEach((t) -> records.add(fromMindMapPath(t, extractValueFunc)));
         return records;
+    }
+
+    public <T> T toBean(Class<T> clazz, MindMapLevelConfig config) {
+        T instance = ReflectionUtils.newInstance(clazz);
+
+        for (MindMapLevelConfig.LevelConfig levelConfig : config.getConfigs()) {
+            BeanUtil.setFieldValue(instance, levelConfig.getKey(), this.mindMapLevels.get(levelConfig.getLevel()));
+        }
+        return instance;
+    }
+
+    public <T> T toBean(Class<T> clazz) {
+        T instance = ReflectionUtils.newInstance(clazz);
+        Field[] fields = ReflectionUtils.getFields(clazz);
+        for (Field field : fields) {
+            NodeLevel a = field.getAnnotation(NodeLevel.class);
+            if (a != null) {
+                ReflectionUtils.setFieldValue(instance, field, this.mindMapLevels.get(a.value()));
+            }
+        }
+        return instance;
     }
 }
