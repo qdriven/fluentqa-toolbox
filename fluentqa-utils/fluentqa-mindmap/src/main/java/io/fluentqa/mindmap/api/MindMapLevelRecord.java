@@ -45,7 +45,6 @@ public class MindMapLevelRecord {
 
     public <T> T toBean(Class<T> clazz, MindMapLevelConfig config) {
         T instance = ReflectionUtils.newInstance(clazz);
-
         for (MindMapLevelConfig.LevelConfig levelConfig : config.getConfigs()) {
             BeanUtil.setFieldValue(instance, levelConfig.getKey(), this.mindMapLevels.get(levelConfig.getLevel()));
         }
