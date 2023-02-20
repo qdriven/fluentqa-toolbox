@@ -5,6 +5,7 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.ZipUtil;
 import io.fluentqa.mindmap.exception.MindMapException;
+import io.fluentqa.mindmap.xmind.model.XmindRawData;
 
 import java.io.IOException;
 import java.io.InputStream;

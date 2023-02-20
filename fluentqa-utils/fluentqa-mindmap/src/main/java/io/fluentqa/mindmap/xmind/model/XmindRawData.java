@@ -1,4 +1,4 @@
-package io.fluentqa.mindmap.xmind;
+package io.fluentqa.mindmap.xmind.model;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONArray;

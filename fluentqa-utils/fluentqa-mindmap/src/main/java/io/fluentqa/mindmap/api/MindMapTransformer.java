@@ -2,9 +2,9 @@ package io.fluentqa.mindmap.api;
 
 import java.util.List;
 
-public interface MindMapTransformer<T> {
+public interface MindMapTransformer<Node> {
+    public List<MindMapPath<Node>> readMindMapToList(String mindMapPath);
 
-    public List<MindMapPath<T>> convertFromFileContent(String mindMapContent);
-    public List<MindMapPath<T>> convertFromFilePath(String mindMapFilePath);
-
+    public <T> List<T> readMindMapToList(String mindMapPath,Class<T> clazz);
+    public <T> List<T> readMindMapToList(String mindMapPath,Class<T> clazz,MindMapConvertConfig config);
 }

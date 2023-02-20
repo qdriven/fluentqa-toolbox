@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class MindMapLevelConfig {
+public class MindMapConvertConfig {
     private List<LevelConfig> configs;
 
     @Data

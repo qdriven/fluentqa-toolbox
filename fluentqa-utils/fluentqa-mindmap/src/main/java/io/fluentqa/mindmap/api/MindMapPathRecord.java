@@ -10,8 +10,9 @@ import java.util.function.Function;
 
 
 @Data
-public class MindMapLevelRecord {
+public class MindMapPathRecord {
     private Map<Integer, String> mindMapLevels = new HashMap<>();
+
     private Integer currentLevel = 0;
 
     private synchronized void increaseTreeLevel() {
@@ -27,25 +28,10 @@ public class MindMapLevelRecord {
         return mindMapLevels;
     }
 
-    public static <T> MindMapLevelRecord fromMindMapPath(MindMapPath<T> path,
-                                                         Function<T, String> extractValueFunc) {
-        MindMapLevelRecord record = new MindMapLevelRecord();
-        for (T pathNode : path.getPathNodes()) {
-            record.add(extractValueFunc.apply(pathNode));
-        }
-        return record;
-    }
 
-    public static <T> List<MindMapLevelRecord> fromMindMapPaths(List<MindMapPath<T>> paths,
-                                                                Function<T, String> extractValueFunc) {
-        List<MindMapLevelRecord> records = new ArrayList<>();
-        paths.forEach((t) -> records.add(fromMindMapPath(t, extractValueFunc)));
-        return records;
-    }
-
-    public <T> T toBean(Class<T> clazz, MindMapLevelConfig config) {
+    public <T> T toBean(Class<T> clazz, MindMapConvertConfig config) {
         T instance = ReflectionUtils.newInstance(clazz);
-        for (MindMapLevelConfig.LevelConfig levelConfig : config.getConfigs()) {
+        for (MindMapConvertConfig.LevelConfig levelConfig : config.getConfigs()) {
             BeanUtil.setFieldValue(instance, levelConfig.getKey(), this.mindMapLevels.get(levelConfig.getLevel()));
         }
         return instance;
@@ -61,5 +47,21 @@ public class MindMapLevelRecord {
             }
         }
         return instance;
+    }
+
+    public static  <T> MindMapPathRecord fromMindMapPath(MindMapPath<T> path,
+                                                 Function<T, String> extractValueFunc) {
+        MindMapPathRecord record = new MindMapPathRecord();
+        for (T pathNode : path.getPathNodes()) {
+            record.add(extractValueFunc.apply(pathNode));
+        }
+        return record;
+    }
+
+    public static <T> List<MindMapPathRecord> fromMindMapPaths(List<MindMapPath<T>> paths,
+                                                        Function<T, String> extractValueFunc) {
+        List<MindMapPathRecord> records = new ArrayList<>();
+        paths.forEach((t) -> records.add(fromMindMapPath(t, extractValueFunc)));
+        return records;
     }
 }
