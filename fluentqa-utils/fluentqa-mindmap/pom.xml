@@ -46,7 +46,7 @@
         </dependency>
         <dependency>
             <groupId>io.fluentqa</groupId>
-            <artifactId>qabox-builtin</artifactId>
+            <artifactId>fluentqa-builtin</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
