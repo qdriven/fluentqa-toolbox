@@ -1,4 +1,4 @@
-package io.fluentqa.table.excel.exception;
+package io.fluentqa.table.base.exception;
 
 public class ExcelException extends RuntimeException{
     public ExcelException() {
