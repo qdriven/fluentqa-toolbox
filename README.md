@@ -6,7 +6,10 @@ Fluent-QA JAVA Test-in-Dev Tool Box.
 
 ![img](img.png)
 
+## Toolbox
+
+- []Mindmap处理
 
 ## Integrations
 
-- [feishu](./fluent-integration/qabox-feishu)
+- [][feishu](./fluent-integration/qabox-feishu)
