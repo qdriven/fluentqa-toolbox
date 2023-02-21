@@ -4,7 +4,7 @@ Fluent-QA JAVA Test-in-Dev Tool Box.
 
 # FluentQA Java Utils
 
-![img](image.png)
+![img](img.png)
 
 
 ## Integrations
