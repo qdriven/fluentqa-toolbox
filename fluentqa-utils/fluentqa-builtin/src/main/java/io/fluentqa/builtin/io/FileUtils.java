@@ -157,7 +157,7 @@ public class FileUtils extends FileUtil {
    * @param pathInClassPath
    * @return string value of the file
    */
-  public static String readFileToString(String pathInClassPath) {
+  public static String readClasspathFile(String pathInClassPath) {
 
     try {
       URL url = ClassLoader.getSystemClassLoader().getResource(pathInClassPath);

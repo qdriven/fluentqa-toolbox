@@ -8,3 +8,5 @@ Fluent QA JAVA Utils is a set of JAVA Utility for QA Usage.
 ## Toolbox
 
 - []mindmap read and write
+  - [X] mindmap to excel
+  - [] excel/table-data to  mindmap,mind writer
