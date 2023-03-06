@@ -73,8 +73,11 @@ public class MarkdownAwesomeListParserTest {
 
     @Test
     public void testTransform(){
-        List<AwesomeModel> repos = parser.transform("low-code-1.md");
-        System.out.println(repos);
-        FileUtils.writeToFile("low-code.json",JSONUtil.toJsonPrettyStr(repos));
+        for (int i = 3; i < 7 ; i++) {
+            List<AwesomeModel> repos = parser.transform("low-code-%d.md".formatted(i));
+            System.out.println(repos);
+            FileUtils.writeToFile("low-code-%d.json".formatted(i),JSONUtil.toJsonPrettyStr(repos));
+        }
+
     }
 }
